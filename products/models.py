@@ -27,6 +27,10 @@ class Product(models.Model):
         today = datetime.date.today()
         return (self.deadline-today).days
 
+    @property
+    def publisher_name(self):
+        return self.publisher.username
+
 
 class Sponsor(models.Model):
     sponsor = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
