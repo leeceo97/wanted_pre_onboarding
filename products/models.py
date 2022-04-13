@@ -1,7 +1,8 @@
+import datetime
+import math
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
 
 class Product(models.Model):
     publisher = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='posted_product')
@@ -10,8 +11,22 @@ class Product(models.Model):
     target_amount = models.PositiveIntegerField()
     total_amount = models.PositiveIntegerField()
     one_time_funding_amount = models.PositiveIntegerField()
-    deadline = models.CharField(max_length=15)
+    deadline = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def sponsor_count(self):
+        return self.sponsor_set.count()
+
+    @property
+    def achievement_rate(self):
+        return f'{math.floor((self.total_amount / self.target_amount) * 100)}%'
+
+    @property
+    def d_day(self):
+        today = datetime.date.today()
+        return (self.deadline-today).days
+
 
 class Sponsor(models.Model):
     sponsor = models.ForeignKey('accounts.User', on_delete=models.CASCADE)
