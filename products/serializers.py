@@ -19,7 +19,6 @@ class ProductSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
-        print('ss')
         data = self.context.get('request').data
         target_amount = data.get('target_amount', None)
         if instance.target_amount != target_amount:
