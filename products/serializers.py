@@ -18,6 +18,14 @@ class ProductSerializer(serializers.ModelSerializer):
         validated_data["publisher"] = self.context.get("request").user
         return super().create(validated_data)
 
+    def update(self, instance, validated_data):
+        print('ss')
+        data = self.context.get('request').data
+        target_amount = data.get('target_amount', None)
+        if instance.target_amount != target_amount:
+            raise serializers.ValidationError('목표금액은 수정할수 없습니다.')
+        return super().update(instance, validated_data)
+
 class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
