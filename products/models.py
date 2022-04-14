@@ -9,7 +9,7 @@ class Product(models.Model):
     title = models.CharField(max_length=31)
     description = models.TextField()
     target_amount = models.PositiveIntegerField()
-    total_amount = models.PositiveIntegerField()
+    total_amount = models.PositiveIntegerField(default=0)
     one_time_funding_amount = models.PositiveIntegerField()
     deadline = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -26,6 +26,10 @@ class Product(models.Model):
     def d_day(self):
         today = datetime.date.today()
         return (self.deadline-today).days
+
+    @property
+    def publisher_name(self):
+        return self.publisher.username
 
 
 class Sponsor(models.Model):
