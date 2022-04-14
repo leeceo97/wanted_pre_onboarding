@@ -6,8 +6,8 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = (
+            'id',
             'title',
-            'publisher',
             'description',
             'target_amount',
             'deadline',
@@ -22,6 +22,7 @@ class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = (
+            'id',
             'title',
             'publisher_name',
             'total_amount',
@@ -34,6 +35,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = (
+            'id',
             'title',
             'publisher_name',
             'total_amount',
@@ -43,3 +45,19 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             'd_day',
             'sponsor_count',
         )
+
+class FundingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Sponsor
+        fields = (
+            'sponsor',
+            'product',
+        )
+        read_only_fields = (
+            'sponsor',
+            'product',
+        )
+    def create(self, validated_data):
+        validated_data["sponsor"] = self.context.get("request").user
+        validated_data["product_id"] = self.context.get("pk")
+        return super().create(validated_data)

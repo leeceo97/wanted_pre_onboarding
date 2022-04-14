@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from products.models import Product, Sponsor
-from products.serializers import ProductListSerializer, ProductDetailSerializer, ProductSerializer
+from products.serializers import ProductListSerializer, ProductDetailSerializer, ProductSerializer, FundingSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -17,10 +17,11 @@ class ProductViewSet(viewsets.ModelViewSet):
         else:
             return ProductSerializer
 
+
     @action(detail=True, methods=['post'])
     def funding(self, request, pk):
-        Sponsor.objects.create(sponsor=request.user, product__id=pk)
-        res = {
-            'message': 'create'
-        }
-        return Response(res, status.HTTP_201_CREATED)
+        serializer = FundingSerializer(data=request.data, context={'request': request, 'pk':pk})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
